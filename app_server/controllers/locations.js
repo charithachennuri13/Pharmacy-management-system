@@ -19,7 +19,7 @@ const homelist = (req, res) => {
     facilities:  ['Clinical Services', 'Medication', 'Compounding'],
     distance: '200m'
     },{
-    name: '7 Hilla Pharmacy',
+    name: '7 Hills Pharmacy',
     address: 'opposite NIMS HOSPITAL, Matha Nagar, Punjagutta, Hyderabad, Telangana 500082',
     rating: 2,
     facilities: ['Medication', 'Compounding'],
