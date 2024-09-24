@@ -22,7 +22,7 @@ router.get('/', ctrlLocations.homelist);
 router.get('/location/:name', ctrlLocations.locationInfo);
 
 // Update this route to include the locationId for adding a review
-router.get('/location/:locationId/review/new', ctrlLocations.addReview);
+router.get('/locations/review/new', ctrlLocations.addReview);
 
 /* Other pages */
 router.get('/about', ctrlOthers.about);

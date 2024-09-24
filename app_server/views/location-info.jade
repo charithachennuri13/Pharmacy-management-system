@@ -42,17 +42,92 @@ block content
     .col-12
       .card.card-primary.review-card
         .card-block
-          a.btn.btn-primary.float-right(href='/location/review/new') Add review
+          a.btn.btn-primary.float-right(href='/locations/review/new') Add review
           h2.card-title Customer reviews
-          each review in location.reviews
-            .row.review
-              .col-12.no-gutters.review-header
-                span.rating
-                  +outputRating(review.rating)
-                span.reviewAuthor #{review.author}
-                small.reviewTimestamp #{review.timestamp}
-              .col-12
-                p !{(review.reviewText).replace(/\n/g, '<br/>')}
+          
+          // Button to load reviews from the server
+          button.btn.btn-secondary#loadReviewsBtn Load All Reviews
+
+          // Modal for displaying reviews
+          div#reviewsModal.modal(style='display: none;')
+            .modal-content
+              .modal-header
+                h2 Customer Reviews
+                button.close&times;#closeModal
+              .modal-body
+                #reviewsContainer // Reviews will be populated here
+                  p No customer reviews available.
+              .modal-footer
+                button.btn.btn-secondary#closeModal Close
+
     .col-12.col-lg-3
       p.lead #{location.name} #{sidebar.context}
       p= sidebar.callToAction
+
+// Client-side script to fetch reviews
+script.
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("Document is ready."); // Check if document is ready
+
+    const loadReviewsBtn = document.getElementById('loadReviewsBtn');
+    const reviewsModal = document.getElementById('reviewsModal');
+    const reviewsContainer = document.getElementById('reviewsContainer');
+    const closeModal = document.getElementById('closeModal');
+
+    // Check if the button is found
+    if (!loadReviewsBtn) {
+      console.error('Load Reviews Button not found!');
+      return;
+    }
+
+    loadReviewsBtn.addEventListener('click', function() {
+      console.log("Load Reviews Button clicked."); // This should log when the button is clicked
+      axios.ge  ('/all/reviews')
+        .then(response => {
+          console.log('Fetching reviews...'); // Log before fetching
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Data fetched from server:', data);
+          const reviews = data.reviews;
+          displayReviews(reviews);
+          reviewsModal.style.display = 'block'; // Show modal
+        })
+        .catch(error => {
+          console.error('Error fetching reviews:', error);
+          reviewsContainer.innerHTML = '<p>Error fetching reviews. Please try again later.</p>';
+        });
+    });
+
+    closeModal.addEventListener('click', function() {
+      reviewsModal.style.display = 'none'; // Hide modal
+    });
+
+    function displayReviews(reviews) {
+      console.log('Displaying reviews...'); // Log when displaying reviews
+      reviewsContainer.innerHTML = ''; // Clear previous content
+
+      if (!reviews || reviews.length === 0) {
+        reviewsContainer.innerHTML = '<p>No customer reviews available.</p>';
+      } else {
+        reviews.forEach(review => {
+          const reviewElement = `
+            <div class="review">
+              <div class="review-header">
+                <span class="rating">${'⭐'.repeat(review.rating)}</span>
+                <span class="reviewAuthor">${review.name || 'Anonymous'}</span>
+                <small class="reviewTimestamp">${new Date().toLocaleString()}</small>
+              </div>
+              <div class="review-body">
+                <p>${review.review ? review.review.replace(/\n/g, '<br/>') : 'No review text available'}</p>
+              </div>
+            </div>
+          `;
+          reviewsContainer.innerHTML += reviewElement;
+        });
+      }
+    }
+  });
