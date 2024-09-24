@@ -1,75 +1,28 @@
 extends layout
+include _includes/sharedHTMLfunctions
 
 block content
   .row.banner
     .col-12
-      h1= pageHeader.title
-        small
-        &nbsp;#{pageHeader.strapline}
-        
-  // Listing 4.6 Complete template for app_server/views/locations-list.pug
-  // Name of the listing and a link to the location
-  // Uses Font Awesome icons to output a star rating
-  // Uses Bootstrap’s badge helper class to display the distance away
-  // Address of the location
-  // Facilities of the location, output using Bootstrap’s badge classes
-  // Figure 4.9 Onscreen rendering of a single location on the List page
+      //h1= pageHeader.title
+      small.tagline #{pageHeader.strapline}
 
-  // Starts header area
   .row
     .col-12.col-md-8
-      .card
-        .card-block
-          h4
-            a(href="/location") Apollo pharmacy
-            small &nbsp;
-            i.fas.fa-star
-            i.fas.fa-star
-            i.fas.fa-star
-            i.far.fa-star
-            i.far.fa-star
-            span.badge.badge-pill.badge-default.float-right 100m
-          p.address Hyderabad
-          p.facilities
-            span.badge.badge-warning Clinical Services
-            span.badge.badge-warning Medication
-            span.badge.badge-warning Compounding
-  .row
-    .col-12.col-md-8
-      .card
-        .card-block
-          h4
-            a(href="/location") Doctors Pharmacy
-            small &nbsp;
-            i.fas.fa-star
-            i.fas.fa-star
-            i.fas.fa-star
-            i.far.fa-star
-            i.far.fa-star
-            span.badge.badge-pill.badge-default.float-right 200m
-          p.address Hyderabad
-          p.facilities
-            span.badge.badge-warning Clinical Services
-            span.badge.badge-warning Medication
-            span.badge.badge-warning Compounding
-  .row
-    .col-12.col-md-8
-      .card
-        .card-block
-          h4
-            a(href="/location") 7 Hills Pharmacy
-            small &nbsp;
-            i.fas.fa-star
-            i.fas.fa-star
-            i.fas.fa-star
-            i.far.fa-star
-            i.far.fa-star
-            span.badge.badge-pill.badge-default.float-right 300m
-          p.address Hyderabad
-          p.facilities
-            span.badge.badge-warning Medication
-            span.badge.badge-warning Compounding
+      each location in locations
+        .card
+          .card-block
+            h4
+              // Use the single location iteration here
+              a.locName(href=`/location/${location.name.replace(/\s+/g, '-').toLowerCase()}`)= location.name
+            
+            // Output the rating
+            +outputRating(location.rating)
+            span.badge.badge-pill.badge-default.float-right= location.distance
+            p.address= location.address
+            .facilities
+              each facility in location.facilities
+                span.badge.badge-warning= facility
 
     .col-12.col-md-4
-      p.lead Looking for Clinical Services and a Medicines? Pharmacy Locator helps you find places. Perhaps with Medicines, Consultation, or Testing? Let Pharmacy Locator help you find the place you're looking for 
-      
+      p.lead= sidebar
