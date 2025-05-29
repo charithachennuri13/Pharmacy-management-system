@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/app_public/server/server.mjs",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dist/app_public/browser/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(assets|images|styles.*\\.css|main.*\\.js|.*\\.ico)",
+      "dest": "/dist/app_public/browser/$1",
+      "status": 200
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/app_public/server/server.mjs",
+      "status": 200
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
